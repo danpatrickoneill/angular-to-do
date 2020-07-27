@@ -11,5 +11,29 @@
       }
     </style>
   </head>
-  <body></body>
+  <body ng-app="todomvc">
+    <ng-view></ng-view>
+
+    <script type="text/ng-template" id="todomvc-index.html">
+      <section class="todoapp">
+        <header class="header">
+          <h1>Todos</h1>
+          <form class="todo-form" ng-submit="addTodo()">
+            <input class="new-todo" type="text" placeholder="What would you like to do?" ng-model="newTodo" ng-disabled="saving" autofocus>
+          </form>
+        </header>
+        <section class="main" ng-show="todos.length" ng-cloak>
+          <input id="toggle=all" class="toggle-all" type="checkbox" ng-model="allChecked" ng-click="markAll(allChecked)">
+          <label for="toggle-all">Mark all as completed</label>
+          <ul class="todo-list">
+            <li ng-repeat="todo in todos | filter:statusFilter track by $index" ng-class="{completed: todo.completed, editing: todo == editedTodo}">
+              <div class="view">
+                input
+              </div>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </script>
+  </body>
 </html>
