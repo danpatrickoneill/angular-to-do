@@ -112,4 +112,12 @@ angular
       $scope.originalTodo = null;
       $scope.reverted = true;
     };
+
+    $scope.removeTodo = function (todo) {
+      store.delete(todo);
+    };
+
+    $scope.saveTodo = function (todo) {
+      store.put(todo);
+    };
   });
