@@ -64,4 +64,52 @@ angular
           $scope.saving = false;
         });
     };
+
+    $scope.editTodo = function (todo) {
+      $scope.editedTodo = todo;
+      // Clone the original todo just in case
+      $scope.originalTodo = angular.extend({}, todo);
+    };
+
+    $scope.saveEdits = function (todo, event) {
+      // Blur events are automatically triggered after the form submit event, so this avoids saving twice
+      if (event === 'blur' && $scope.saveEvent === 'submit') {
+        $scope.saveEvent = null;
+        return;
+      }
+
+      $scope.saveEvent = event;
+
+      if ($scope.reverted) {
+        // Todo edits were reverted; break out of function without saving
+        $scope.reverted = null;
+        return;
+      }
+
+      todo.title = todo.title.trim();
+
+      // Submission was an unchanged todo; reset $scope.editedTodo and break out of function without saving
+      if (todo.title === $scope.originalTodo.title) {
+        $scope.editedTodo = null;
+        return;
+      }
+
+      store[todo.title ? 'put' : 'delete'](todo)
+        .then(
+          function success() {},
+          function error() {
+            todo.title - $scope.originalTodo.title;
+          }
+        )
+        .finally(function () {
+          $scope.editedTodo = null;
+        });
+    };
+
+    $scope.revertEdits = function (todo) {
+      todos[todo.indexOf(todo)] = $scope.originalTodo;
+      $scope.editedTodo = null;
+      $scope.originalTodo = null;
+      $scope.reverted = true;
+    };
   });
