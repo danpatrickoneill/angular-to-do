@@ -87,4 +87,33 @@ angular
     };
 
     return store;
+  })
+  .factory('localStorage', function ($q) {
+    'use strict';
+
+    const STORAGE_ID = 'todos-angularjs';
+
+    const store = {
+      todos: [],
+
+      _getFromLocalStorage: function () {
+        return JSON.parse(localStorage.getItem(STORAGE_ID) || []);
+      },
+
+      _saveToLocalStorage: function () {
+        localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
+      },
+
+      clearCompleted: function () {
+        const deferred = $q.defer();
+
+        const incompleteTodos = store.todos.filter((todo) => !todo.completed);
+
+        angular.copy(incompleteTodos, store.todos);
+        store._saveToLocalStorage(store.todos);
+
+        deferred.resolve(store.todos);
+        return deferred.promise;
+      },
+    };
   });
