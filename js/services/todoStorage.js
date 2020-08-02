@@ -27,10 +27,13 @@ angular
 
     const store = {
       todos: [],
+
       api: $resource('/api/todos/:id', null, {
         update: { method: 'PUT' },
       }),
+
       clearCompleted: function () {
+        // Copy current stored todos, just in case
         const originalTodos = store.todos.slice(0);
         const incompleteTodos = store.todos.filter((todo) => !todo.completed);
 
@@ -43,5 +46,45 @@ angular
           }
         );
       },
+
+      insert: function (todo) {
+        const originalTodos = store.todos.slice(0);
+
+        return store.api.save(
+          todo,
+          function success(res) {
+            todo.id = res.id;
+            store.todos.push(todo);
+          },
+          function error() {
+            angular.copy(originalTodos, store.todos);
+          }
+        );
+      },
+
+      get: function () {
+        return store.api.query(function (res) {
+          angular.copy(res, store.todos);
+        });
+      },
+
+      put: function (todo) {
+        return store.api.update({ id: todo.id }, todo).$promise;
+      },
+
+      delete: function (todo) {
+        const originalTodos = store.todos.slice(0);
+
+        store.todos.splice(store.todos.indexOf(todo), 1);
+        return store.api.delete(
+          { id: todo.id },
+          function () {},
+          function error() {
+            angular.copy(originalTodos, store.todos);
+          }
+        );
+      },
     };
+
+    return store;
   });
