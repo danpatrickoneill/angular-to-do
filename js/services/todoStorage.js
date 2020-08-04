@@ -18,7 +18,7 @@ angular
         return $injector.get('api');
       },
       function () {
-        return $injector.get('localstorage');
+        return $injector.get('localStorage');
       }
     );
   })
@@ -101,7 +101,7 @@ angular
       },
 
       _saveToLocalStorage: function () {
-        localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
+        localStorage.setItem(STORAGE_ID, JSON.stringify(store.todos));
       },
 
       clearCompleted: function () {
